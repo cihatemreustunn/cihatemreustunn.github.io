@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cihat Emre Ustun - Researcher</title>
+    <title>Cihat Emre Ustun - Postdoc Researcher</title>
     <style>
         * {
             margin: 0;
@@ -12,27 +12,24 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #2b2b2b;
             color: #ffffff;
             line-height: 1.6;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
         /* Navigation */
         nav {
-            background-color: #2d2d2d;
+            background-color: #2b2b2b;
             padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-bottom: 1px solid #404040;
         }
 
         .nav-content {
@@ -42,9 +39,9 @@
         }
 
         .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #4a9eff;
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #ffffff;
         }
 
         .nav-links {
@@ -54,10 +51,11 @@
         }
 
         .nav-links a {
-            color: #ffffff;
+            color: #cccccc;
             text-decoration: none;
             transition: color 0.3s ease;
             cursor: pointer;
+            font-size: 0.95rem;
         }
 
         .nav-links a:hover,
@@ -84,86 +82,194 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: flex-start;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex-shrink: 0;
+        }
+
+        .hero-image img {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .hero-image .placeholder {
+            width: 200px;
+            height: 200px;
+            background-color: #404040;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
         h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #4a9eff;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .affiliations {
+            font-size: 1.1rem;
+            color: #cccccc;
+            margin-bottom: 2rem;
+            font-weight: normal;
+        }
+
+        .affiliations strong {
+            color: #ffffff;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 1.5rem;
-            color: #4a9eff;
-            border-bottom: 2px solid #4a9eff;
-            padding-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: bold;
         }
 
         h3 {
             font-size: 1.3rem;
             margin-bottom: 1rem;
-            color: #87ceeb;
+            color: #ffffff;
         }
 
         p {
             margin-bottom: 1rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            color: #cccccc;
         }
 
-        .highlight {
-            background-color: #2d2d2d;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin: 1.5rem 0;
-            border-left: 4px solid #4a9eff;
+        a {
+            color: #4a9eff;
+            text-decoration: none;
         }
 
-        .blog-post {
-            background-color: #2d2d2d;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            border-left: 4px solid #4a9eff;
+        a:hover {
+            text-decoration: underline;
         }
 
-        .blog-post h4 {
-            color: #87ceeb;
-            margin-bottom: 0.5rem;
-        }
-
-        .blog-post .date {
-            color: #888;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
+        /* News Section */
+        .news-list {
+            margin-top: 2rem;
         }
 
         .news-item {
-            background-color: #2d2d2d;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border-radius: 8px;
-            border-left: 4px solid #4a9eff;
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: flex-start;
+            gap: 1rem;
         }
 
-        .news-item .date {
-            color: #4a9eff;
+        .news-date {
+            color: #888;
+            font-size: 0.9rem;
+            min-width: 80px;
+            flex-shrink: 0;
+        }
+
+        .news-content {
+            flex: 1;
+        }
+
+        .news-content em {
+            font-style: italic;
+            color: #cccccc;
+        }
+
+        /* Publications Section */
+        .publications-list {
+            margin-top: 2rem;
+        }
+
+        .publication-item {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #404040;
+        }
+
+        .publication-item:last-child {
+            border-bottom: none;
+        }
+
+        .publication-badge {
+            display: inline-block;
+            background-color: #4a9eff;
+            color: #ffffff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
 
+        .publication-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .publication-authors {
+            color: #cccccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .publication-journal {
+            color: #cccccc;
+            font-style: italic;
+            margin-bottom: 0.8rem;
+        }
+
+        .publication-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .publication-link {
+            background-color: #404040;
+            color: #cccccc;
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            border: 1px solid #555;
+        }
+
+        .publication-link:hover {
+            background-color: #555;
+            text-decoration: none;
+        }
+
+        /* Contact Section */
         .contact-info {
-            background-color: #2d2d2d;
+            background-color: #363636;
             padding: 2rem;
             border-radius: 8px;
             margin-top: 2rem;
         }
 
-        .contact-info a {
-            color: #4a9eff;
-            text-decoration: none;
+        .contact-info h3 {
+            margin-bottom: 1rem;
         }
 
-        .contact-info a:hover {
-            text-decoration: underline;
+        .contact-info p {
+            margin-bottom: 0.8rem;
         }
 
         /* Mobile Responsive */
@@ -176,14 +282,29 @@
             .nav-links {
                 flex-wrap: wrap;
                 gap: 1rem;
+                justify-content: center;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-image {
+                order: -1;
             }
 
             h1 {
                 font-size: 2rem;
             }
 
-            h2 {
-                font-size: 1.5rem;
+            .news-item {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .news-date {
+                min-width: auto;
             }
         }
     </style>
@@ -194,10 +315,14 @@
             <div class="nav-content">
                 <div class="logo">Cihat Emre Ustun</div>
                 <ul class="nav-links">
-                    <li><a href="#" onclick="showSection('about')" class="active">About Me</a></li>
+                    <li><a href="#" onclick="showSection('about')" class="active">About</a></li>
                     <li><a href="#" onclick="showSection('blog')">Blog</a></li>
-                    <li><a href="#" onclick="showSection('news')">News</a></li>
+                    <li><a href="#" onclick="showSection('projects')">Projects</a></li>
+                    <li><a href="#" onclick="showSection('repositories')">Repositories</a></li>
+                    <li><a href="#" onclick="showSection('publications')">Publications</a></li>
+                    <li><a href="#" onclick="showSection('teaching')">Teaching</a></li>
                     <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+                    <li><a href="#" onclick="showSection('cv')">CV</a></li>
                 </ul>
             </div>
         </div>
@@ -205,85 +330,164 @@
 
     <main class="main-content">
         <div class="container">
-            <!-- About Me Section -->
+            <!-- About Section -->
             <section id="about" class="section active">
-                <h1>About Me</h1>
-                <div class="highlight">
-                    <p>Welcome! I'm a postdoc based in the UK, I will be sharing about some updates on research and career here.</p>
+                <div class="hero">
+                    <div class="hero-text">
+                        <h1>Cihat Emre Ustun</h1>
+                        <div class="affiliations">
+                            <strong>Affiliations:</strong> [Your Department] and [Your Research Center/Institute]
+                        </div>
+                        
+                        <p>I am a Postdoctoral Research Associate in [Your Field] at the <a href="https://www.your-university.ac.uk" target="_blank">[Your University]</a> interested in [your main research interests]. I am in the <a href="https://www.your-group.ac.uk" target="_blank">[Your Research Group]</a> (<a href="https://www.your-department.ac.uk" target="_blank">[Your Department]</a>) and in the <a href="https://www.your-institute.ac.uk" target="_blank">[Your Institute]</a> (<a href="https://www.your-center.ac.uk" target="_blank">[Your Research Center]</a>).</p>
+                        
+                        <p>My research interests include [research area 1], [research area 2], [research area 3], and [research area 4].</p>
+                        
+                        <p>I am also a [programming language] package developer. My packages can be found on <a href="https://github.com/yourusername" target="_blank">GitHub</a>.</p>
+                        
+                        <p>In my personal life, I enjoy [hobby 1], [hobby 2], [hobby 3], and [hobby 4].</p>
+                    </div>
+                    <div class="hero-image">
+                        <div class="placeholder">Add your photo here</div>
+                    </div>
                 </div>
-                
-                <h3>Research Interests</h3>
-                <p>My research focuses on machine learning for fuels and combustion. I'm particularly interested in exploring bayesian ML/UQ and their applications in fuel and combustion science. I also have expertise in computational modelling, applied to various multiphysics and multiscale problems.</p>
-                
-                <h3>Current Position</h3>
-                <p>I'm currently working as a postdoctoral researcher at Queen Mary University of London, where I'm developing data-driven liquid ammonia spray models.</p>
-                
-                <h3>Education</h3>
-                <p>I completed my PhD in Mechanical Engineering from Queen Mary University of London in 2025, where my dissertation focused on "Accelerating Zero-Carbon Fuel Combustion Modelling with Machine Learning".</p>
-                
-                <h3>Connect with Me</h3>
-                <div class="contact-info">
-                    <p><strong>Academic & Professional Profiles:</strong></p>
-                    <p>
-                        <a href="https://www.linkedin.com/in/cihat-emre-%C3%BCst%C3%BCn/" target="_blank">LinkedIn</a> | 
-                        <a href="https://scholar.google.com/citations?user=qeMKwdIAAAAJ&hl=tr&oi=ao" target="_blank">Google Scholar</a> | 
-                        <a href="https://www.scopus.com/authid/detail.uri?authorId=57247528300&origin=recordpage" target="_blank">Scopus</a> | 
-                        <a href="https://www.sems.qmul.ac.uk/staff/c.utsun" target="_blank">University Profile</a>
-                    </p>
-                    <p>
-                        <a href="https://orcid.org/my-orcid?orcid=0000-0003-3598-5973" target="_blank">ORCID</a> | 
-                        <a href="https://www.researchgate.net/profile/Cihat-Uestuen?ev=hdr_xprf" target="_blank">ResearchGate</a> | 
-                        <a href="https://github.com/cihatemreustunn" target="_blank">GitHub</a>
-                    </p>
+
+                <h2>News</h2>
+                <div class="news-list">
+                    <div class="news-item">
+                        <div class="news-date">Jul 6, 2024</div>
+                        <div class="news-content">My new paper on <em>[Paper Title]</em> has been accepted for publication!</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">Jun 15, 2024</div>
+                        <div class="news-content">Presented my research at the <a href="#" target="_blank">[Conference Name]</a> conference.</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">May 20, 2024</div>
+                        <div class="news-content"><em>[Paper Title]</em> is now available on <a href="#" target="_blank">arXiv</a>!</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">Apr 10, 2024</div>
+                        <div class="news-content">My <a href="#" target="_blank">[Package Name]</a> package has been released on <a href="#" target="_blank">GitHub</a>!</div>
+                    </div>
+                    <div class="news-item">
+                        <div class="news-date">Mar 1, 2024</div>
+                        <div class="news-content">This website has gone live!</div>
+                    </div>
+                </div>
+
+                <h2>Selected publications</h2>
+                <div class="publications-list">
+                    <div class="publication-item">
+                        <div class="publication-badge">JCC</div>
+                        <div class="publication-title">[Your Paper Title]: A comprehensive analysis of [research topic]</div>
+                        <div class="publication-authors">Cihat Emre Ustun, [Co-author 1], [Co-author 2], [Co-author 3], and [Co-author 4]</div>
+                        <div class="publication-journal">Journal of [Your Field] Dec 2024</div>
+                        <div class="publication-links">
+                            <a href="#" class="publication-link">BIB</a>
+                            <a href="#" class="publication-link">URL</a>
+                        </div>
+                    </div>
+                    
+                    <div class="publication-item">
+                        <div class="publication-badge">TAG</div>
+                        <div class="publication-title">[Another Paper Title]: Advances in [research area]</div>
+                        <div class="publication-authors">[Co-author 1], Cihat Emre Ustun, [Co-author 2], and [Co-author 3]</div>
+                        <div class="publication-journal">[Journal Name] Nov 2024</div>
+                        <div class="publication-links">
+                            <a href="#" class="publication-link">ABS</a>
+                            <a href="#" class="publication-link">BIB</a>
+                            <a href="#" class="publication-link">URL</a>
+                            <a href="#" class="publication-link">PDF</a>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <!-- Blog Section -->
             <section id="blog" class="section">
                 <h2>Blog</h2>
+                <p>Coming soon! I'll be sharing insights about my research, academic life, and thoughts on developments in [your field].</p>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="section">
+                <h2>Projects</h2>
+                <p>Here you'll find information about my current and past research projects.</p>
                 
-                <div class="blog-post">
-                    <h4>Reflections on My Research Journey</h4>
-                    <div class="date">March 15, 2024</div>
-                    <p>In this post, I share insights from my ongoing research and discuss some of the challenges and breakthroughs I've encountered along the way...</p>
-                </div>
+                <h3>Current Projects</h3>
+                <p><strong>[Project Name 1]:</strong> Description of your current research project and its objectives.</p>
+                <p><strong>[Project Name 2]:</strong> Another ongoing project with brief description.</p>
                 
-                <div class="blog-post">
-                    <h4>Conference Highlights: [Conference Name]</h4>
-                    <div class="date">February 28, 2024</div>
-                    <p>A summary of the most interesting presentations and discussions from the recent conference I attended...</p>
-                </div>
+                <h3>Past Projects</h3>
+                <p><strong>[Previous Project]:</strong> Description of completed research work.</p>
+            </section>
+
+            <!-- Repositories Section -->
+            <section id="repositories" class="section">
+                <h2>Repositories</h2>
+                <p>My code repositories and software packages:</p>
                 
-                <div class="blog-post">
-                    <h4>Understanding [Research Topic]: A Beginner's Guide</h4>
-                    <div class="date">January 10, 2024</div>
-                    <p>An accessible introduction to one of my research areas, designed for those new to the field...</p>
+                <div class="contact-info">
+                    <h3>GitHub Repositories</h3>
+                    <p><a href="https://github.com/yourusername/package1" target="_blank">[Package Name 1]</a> - Description of your first package</p>
+                    <p><a href="https://github.com/yourusername/package2" target="_blank">[Package Name 2]</a> - Description of your second package</p>
+                    <p><a href="https://github.com/yourusername" target="_blank">View all repositories →</a></p>
                 </div>
             </section>
 
-            <!-- News Section -->
-            <section id="news" class="section">
-                <h2>News & Updates</h2>
-                
-                <div class="news-item">
-                    <div class="date">April 2024</div>
-                    <p>Excited to announce that our paper on [Topic] has been accepted for publication in [Journal Name]!</p>
+            <!-- Publications Section -->
+            <section id="publications" class="section">
+                <h2>Publications</h2>
+                <div class="publications-list">
+                    <div class="publication-item">
+                        <div class="publication-badge">JCC</div>
+                        <div class="publication-title">[Your Paper Title]: A comprehensive analysis of [research topic]</div>
+                        <div class="publication-authors">Cihat Emre Ustun, [Co-author 1], [Co-author 2], [Co-author 3], and [Co-author 4]</div>
+                        <div class="publication-journal">Journal of [Your Field] Dec 2024</div>
+                        <div class="publication-links">
+                            <a href="#" class="publication-link">BIB</a>
+                            <a href="#" class="publication-link">URL</a>
+                        </div>
+                    </div>
+                    
+                    <div class="publication-item">
+                        <div class="publication-badge">TAG</div>
+                        <div class="publication-title">[Another Paper Title]: Advances in [research area]</div>
+                        <div class="publication-authors">[Co-author 1], Cihat Emre Ustun, [Co-author 2], and [Co-author 3]</div>
+                        <div class="publication-journal">[Journal Name] Nov 2024</div>
+                        <div class="publication-links">
+                            <a href="#" class="publication-link">ABS</a>
+                            <a href="#" class="publication-link">BIB</a>
+                            <a href="#" class="publication-link">URL</a>
+                            <a href="#" class="publication-link">PDF</a>
+                        </div>
+                    </div>
+                    
+                    <div class="publication-item">
+                        <div class="publication-badge">CONF</div>
+                        <div class="publication-title">[Conference Paper Title]: Novel approaches to [research problem]</div>
+                        <div class="publication-authors">Cihat Emre Ustun, [Co-author 1]</div>
+                        <div class="publication-journal">Proceedings of [Conference Name] 2024</div>
+                        <div class="publication-links">
+                            <a href="#" class="publication-link">ABS</a>
+                            <a href="#" class="publication-link">BIB</a>
+                            <a href="#" class="publication-link">PDF</a>
+                        </div>
+                    </div>
                 </div>
+            </section>
+
+            <!-- Teaching Section -->
+            <section id="teaching" class="section">
+                <h2>Teaching</h2>
+                <p>Information about my teaching experience and courses.</p>
                 
-                <div class="news-item">
-                    <div class="date">March 2024</div>
-                    <p>I'll be presenting our latest findings at the [Conference Name] in [Location]. Looking forward to the discussions!</p>
-                </div>
+                <h3>Current Teaching</h3>
+                <p><strong>[Course Name]:</strong> Description of course you're currently teaching.</p>
                 
-                <div class="news-item">
-                    <div class="date">February 2024</div>
-                    <p>Grateful to receive the [Award/Grant Name] which will support my research on [Topic] for the next year.</p>
-                </div>
-                
-                <div class="news-item">
-                    <div class="date">January 2024</div>
-                    <p>New collaboration started with [Institution/Researcher Name] on [Project Description].</p>
-                </div>
+                <h3>Past Teaching</h3>
+                <p><strong>[Previous Course]:</strong> Description of previous teaching experience.</p>
             </section>
 
             <!-- Contact Section -->
@@ -312,6 +516,21 @@
                         <a href="https://github.com/yourusername" target="_blank">GitHub</a>
                     </p>
                 </div>
+            </section>
+
+            <!-- CV Section -->
+            <section id="cv" class="section">
+                <h2>Curriculum Vitae</h2>
+                <p>Download my CV: <a href="path/to/your/cv.pdf" target="_blank">CV.pdf</a></p>
+                
+                <h3>Education</h3>
+                <p><strong>PhD in [Field]</strong> - [University], [Year]</p>
+                <p><strong>MSc in [Field]</strong> - [University], [Year]</p>
+                <p><strong>BSc in [Field]</strong> - [University], [Year]</p>
+                
+                <h3>Experience</h3>
+                <p><strong>Postdoctoral Research Associate</strong> - [Current Institution], [Year - Present]</p>
+                <p><strong>[Previous Position]</strong> - [Previous Institution], [Year - Year]</p>
             </section>
         </div>
     </main>
