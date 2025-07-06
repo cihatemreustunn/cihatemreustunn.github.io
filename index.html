@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cihat Emre Ustun - Postdoc Researcher</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: #2d2d2d;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a9eff;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #4a9eff;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 3rem 0;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4a9eff;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #4a9eff;
+            border-bottom: 2px solid #4a9eff;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #87ceeb;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .highlight {
+            background-color: #2d2d2d;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .publication-item {
+            background-color: #2d2d2d;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .publication-item h4 {
+            color: #87ceeb;
+            margin-bottom: 0.5rem;
+        }
+
+        .publication-item .authors {
+            color: #cccccc;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .publication-item .journal {
+            color: #4a9eff;
+            font-weight: bold;
+        }
+
+        .blog-post {
+            background-color: #2d2d2d;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .blog-post h4 {
+            color: #87ceeb;
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-post .date {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .news-item {
+            background-color: #2d2d2d;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #4a9eff;
+        }
+
+        .news-item .date {
+            color: #4a9eff;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info {
+            background-color: #2d2d2d;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .contact-info a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">Cihat Emre Ustun</div>
+                <ul class="nav-links">
+                    <li><a href="#" onclick="showSection('about')" class="active">About Me</a></li>
+                    <li><a href="#" onclick="showSection('publications')">Publications</a></li>
+                    <li><a href="#" onclick="showSection('blog')">Blog</a></li>
+                    <li><a href="#" onclick="showSection('news')">News</a></li>
+                    <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- About Me Section -->
+            <section id="about" class="section active">
+                <h1>About Me</h1>
+                <div class="highlight">
+                    <p>Welcome to my academic website! I'm a postdoc researcher based in the UK, passionate about advancing knowledge in my field through rigorous research and collaboration.</p>
+                </div>
+                
+                <h3>Research Interests</h3>
+                <p>My research focuses on [Your Research Area]. I'm particularly interested in exploring [Specific Topics] and their applications in [Field/Industry].</p>
+                
+                <h3>Current Position</h3>
+                <p>I'm currently working as a postdoctoral researcher at [University/Institution Name], where I'm involved in [Brief Description of Current Project].</p>
+                
+                <h3>Education</h3>
+                <p>I completed my PhD in [Field] from [University] in [Year], where my dissertation focused on [Dissertation Topic].</p>
+                
+                <h3>Connect with Me</h3>
+                <div class="contact-info">
+                    <p><strong>Academic & Professional Profiles:</strong></p>
+                    <p>
+                        <a href="https://www.linkedin.com/in/your-linkedin-profile" target="_blank">LinkedIn</a> | 
+                        <a href="https://scholar.google.com/citations?user=your-profile" target="_blank">Google Scholar</a> | 
+                        <a href="https://www.scopus.com/authid/detail.uri?authorId=your-scopus-id" target="_blank">Scopus</a> | 
+                        <a href="https://www.your-university.ac.uk/department/staff/your-profile" target="_blank">University Profile</a>
+                    </p>
+                    <p>
+                        <a href="https://orcid.org/your-orcid-id" target="_blank">ORCID</a> | 
+                        <a href="https://www.researchgate.net/profile/your-profile" target="_blank">ResearchGate</a> | 
+                        <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Publications Section -->
+            <section id="publications" class="section">
+                <h2>Publications</h2>
+                
+                <div class="publication-item">
+                    <h4>Title of Your Most Recent Paper</h4>
+                    <div class="authors">C.E. Ustun, Co-Author Name, Another Author</div>
+                    <div class="journal">Journal Name, Volume(Issue), Pages, Year</div>
+                    <p>Brief description of the paper and its key findings...</p>
+                </div>
+                
+                <div class="publication-item">
+                    <h4>Another Important Publication</h4>
+                    <div class="authors">C.E. Ustun, Collaborator Name</div>
+                    <div class="journal">Conference Proceedings, Year</div>
+                    <p>Description of this research work and its contribution to the field...</p>
+                </div>
+                
+                <div class="publication-item">
+                    <h4>Earlier Research Publication</h4>
+                    <div class="authors">C.E. Ustun, et al.</div>
+                    <div class="journal">Journal Name, Year</div>
+                    <p>Overview of this publication and its impact...</p>
+                </div>
+            </section>
+
+            <!-- Blog Section -->
+            <section id="blog" class="section">
+                <h2>Blog</h2>
+                
+                <div class="blog-post">
+                    <h4>Reflections on My Research Journey</h4>
+                    <div class="date">March 15, 2024</div>
+                    <p>In this post, I share insights from my ongoing research and discuss some of the challenges and breakthroughs I've encountered along the way...</p>
+                </div>
+                
+                <div class="blog-post">
+                    <h4>Conference Highlights: [Conference Name]</h4>
+                    <div class="date">February 28, 2024</div>
+                    <p>A summary of the most interesting presentations and discussions from the recent conference I attended...</p>
+                </div>
+                
+                <div class="blog-post">
+                    <h4>Understanding [Research Topic]: A Beginner's Guide</h4>
+                    <div class="date">January 10, 2024</div>
+                    <p>An accessible introduction to one of my research areas, designed for those new to the field...</p>
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section id="news" class="section">
+                <h2>News & Updates</h2>
+                
+                <div class="news-item">
+                    <div class="date">April 2024</div>
+                    <p>Excited to announce that our paper on [Topic] has been accepted for publication in [Journal Name]!</p>
+                </div>
+                
+                <div class="news-item">
+                    <div class="date">March 2024</div>
+                    <p>I'll be presenting our latest findings at the [Conference Name] in [Location]. Looking forward to the discussions!</p>
+                </div>
+                
+                <div class="news-item">
+                    <div class="date">February 2024</div>
+                    <p>Grateful to receive the [Award/Grant Name] which will support my research on [Topic] for the next year.</p>
+                </div>
+                
+                <div class="news-item">
+                    <div class="date">January 2024</div>
+                    <p>New collaboration started with [Institution/Researcher Name] on [Project Description].</p>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="section">
+                <h2>Contact</h2>
+                
+                <div class="contact-info">
+                    <h3>Get in Touch</h3>
+                    <p>I'm always interested in discussing research collaborations, sharing ideas, or connecting with fellow researchers.</p>
+                    
+                    <p><strong>Email:</strong> <a href="mailto:your.email@institution.ac.uk">your.email@institution.ac.uk</a></p>
+                    <p><strong>Institution:</strong> [Your Department], [University Name]</p>
+                    <p><strong>Office:</strong> [Building Name, Room Number]</p>
+                    <p><strong>Phone:</strong> +44 (0) [Your Phone Number]</p>
+                    
+                    <p><strong>Academic & Professional Profiles:</strong></p>
+                    <p>
+                        <a href="https://www.linkedin.com/in/your-linkedin-profile" target="_blank">LinkedIn</a> | 
+                        <a href="https://scholar.google.com/citations?user=your-profile" target="_blank">Google Scholar</a> | 
+                        <a href="https://www.scopus.com/authid/detail.uri?authorId=your-scopus-id" target="_blank">Scopus</a> | 
+                        <a href="https://www.your-university.ac.uk/department/staff/your-profile" target="_blank">University Profile</a>
+                    </p>
+                    <p>
+                        <a href="https://orcid.org/your-orcid-id" target="_blank">ORCID</a> | 
+                        <a href="https://www.researchgate.net/profile/your-profile" target="_blank">ResearchGate</a> | 
+                        <a href="https://github.com/yourusername" target="_blank">GitHub</a>
+                    </p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update navigation
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
