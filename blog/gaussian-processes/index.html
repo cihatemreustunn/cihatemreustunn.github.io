@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaussian Processes from Scratch - Cihat Emre Ustun</title>
+    <meta name="description" content="A visual, code-first introduction to Gaussian processes: the intuition, the maths, a complete NumPy implementation, and the same model in a probabilistic library.">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/styles/atom-one-dark.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #2b2b2b;
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Reading progress */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            width: 0%;
+            background-color: #4a9eff;
+            z-index: 100;
+            transition: width 0.1s linear;
+        }
+
+        /* Navigation - identical to the main site */
+        nav {
+            background-color: #2b2b2b;
+            padding: 1rem 0;
+            border-bottom: 1px solid #404040;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: normal;
+            color: #ffffff;
+        }
+
+        .logo a {
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Article */
+        article {
+            padding: 3rem 0 4rem;
+        }
+
+        .post-header {
+            border-bottom: 1px solid #404040;
+            padding-bottom: 2rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 1.5rem;
+        }
+
+        .back-link:hover {
+            color: #4a9eff;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            line-height: 1.25;
+            font-weight: normal;
+            margin-bottom: 0.8rem;
+        }
+
+        .post-meta {
+            color: #888;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .post-meta .dot::before {
+            content: "·";
+        }
+
+        .tag {
+            background-color: #363636;
+            border: 1px solid #4a4a4a;
+            color: #cccccc;
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        .lede {
+            font-size: 1.12rem;
+            color: #dddddd;
+            margin-top: 1.5rem;
+        }
+
+        /* Table of contents */
+        .toc {
+            background-color: #323232;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .toc h4 {
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #888;
+            font-weight: normal;
+            margin-bottom: 0.8rem;
+        }
+
+        .toc ol {
+            margin: 0;
+            padding-left: 1.2rem;
+            columns: 2;
+            column-gap: 2rem;
+        }
+
+        .toc li {
+            margin-bottom: 0.35rem;
+            color: #888;
+            font-size: 0.93rem;
+            break-inside: avoid;
+        }
+
+        h2 {
+            font-size: 1.65rem;
+            font-weight: bold;
+            margin: 3.2rem 0 1.2rem;
+            scroll-margin-top: 1.5rem;
+        }
+
+        h2 .num {
+            color: #4a9eff;
+            font-weight: normal;
+            margin-right: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 2rem 0 0.8rem;
+            color: #ffffff;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            color: #cccccc;
+        }
+
+        ul, ol.body-list {
+            margin: 0 0 1.2rem 1.4rem;
+            color: #cccccc;
+        }
+
+        li {
+            margin-bottom: 0.45rem;
+        }
+
+        strong {
+            color: #ffffff;
+        }
+
+        /* Callouts */
+        .callout {
+            border-left: 3px solid #4a9eff;
+            background-color: #323232;
+            border-radius: 0 6px 6px 0;
+            padding: 1rem 1.3rem;
+            margin: 1.8rem 0;
+        }
+
+        .callout p:last-child {
+            margin-bottom: 0;
+        }
+
+        .callout .callout-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #4a9eff;
+            margin-bottom: 0.4rem;
+        }
+
+        .callout.warn {
+            border-left-color: #ffb454;
+        }
+
+        .callout.warn .callout-title {
+            color: #ffb454;
+        }
+
+        /* Figures */
+        figure {
+            margin: 2.2rem 0;
+        }
+
+        figure img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        figcaption {
+            color: #999;
+            font-size: 0.88rem;
+            margin-top: 0.8rem;
+            line-height: 1.55;
+        }
+
+        figcaption b {
+            color: #cccccc;
+            font-weight: normal;
+        }
+
+        .fig-scroll {
+            overflow-x: auto;
+        }
+
+        /* Code */
+        .code-block {
+            position: relative;
+            margin: 1.6rem 0;
+        }
+
+        .code-block .code-label {
+            font-size: 0.75rem;
+            color: #888;
+            background-color: #1f1f1f;
+            border: 1px solid #3a3a3a;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            padding: 0.45rem 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid #4a4a4a;
+            color: #999;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .copy-btn:hover {
+            color: #4a9eff;
+            border-color: #4a9eff;
+        }
+
+        pre {
+            margin: 0;
+            border: 1px solid #3a3a3a;
+            border-radius: 0 0 6px 6px;
+            overflow-x: auto;
+        }
+
+        pre code.hljs {
+            background: #1f1f1f;
+            padding: 1rem 1.1rem;
+            font-size: 0.86rem;
+            line-height: 1.55;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        p code, li code, figcaption code {
+            background-color: #383838;
+            padding: 0.1rem 0.35rem;
+            border-radius: 3px;
+            font-size: 0.88em;
+            color: #e6e6e6;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        /* KaTeX sizing */
+        .katex-display {
+            margin: 1.6rem 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        .katex {
+            font-size: 1.02em;
+        }
+
+        /* Tables */
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        .table-scroll table {
+            min-width: 520px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.6rem 0;
+            font-size: 0.93rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid #404040;
+            color: #cccccc;
+            vertical-align: top;
+        }
+
+        th {
+            color: #ffffff;
+            font-weight: bold;
+            border-bottom: 1px solid #555;
+        }
+
+        tbody tr:hover {
+            background-color: #323232;
+        }
+
+        /* References */
+        .references {
+            margin-top: 1rem;
+            font-size: 0.93rem;
+        }
+
+        .references li {
+            margin-bottom: 0.7rem;
+            color: #aaaaaa;
+        }
+
+        .post-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid #404040;
+            color: #888;
+            font-size: 0.93rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+            }
+
+            h1 {
+                font-size: 1.7rem;
+            }
+
+            h2 {
+                font-size: 1.35rem;
+            }
+
+            .toc ol {
+                columns: 1;
+            }
+
+            /* Let wide multi-panel figures scroll sideways instead of
+               shrinking into illegibility on a phone. */
+            .fig-scroll {
+                margin-left: -20px;
+                margin-right: -20px;
+                padding-bottom: 0.3rem;
+            }
+
+            .fig-scroll.wide img {
+                min-width: 720px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+
+    <nav>
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo"><a href="../../index.html">Cihat Emre <strong>Ustun</strong></a></div>
+                <ul class="nav-links">
+                    <li><a href="../../index.html#about">About</a></li>
+                    <li><a href="../../index.html#blog" class="active">Blog</a></li>
+                    <li><a href="../../index.html#publications">Publications</a></li>
+                    <li><a href="../../index.html#teaching">Teaching</a></li>
+                    <li><a href="../../index.html#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <article>
+        <div class="container">
+            <header class="post-header">
+                <a href="../../index.html#blog" class="back-link">← All posts</a>
+                <h1>Gaussian Processes from Scratch</h1>
+                <div class="post-meta">
+                    <span>12 September 2026</span>
+                    <span class="dot"></span>
+                    <span>~25 min read</span>
+                    <span class="dot"></span>
+                    <span class="tag">Bayesian ML</span>
+                    <span class="tag">NumPy</span>
+                    <span class="tag">Uncertainty</span>
+                </div>
+                <p class="lede">Most of machine learning asks: <em>what is the best function that fits my data?</em> A Gaussian process asks a better question: <em>which functions are consistent with my data, and how sure am I about each of them?</em> This post builds the answer from a single fact about Gaussian distributions, with about fifty lines of NumPy and a lot of pictures.</p>
+            </header>
+
+            <nav class="toc">
+                <h4>Contents</h4>
+                <ol>
+                    <li><a href="#why">Why distributions over functions</a></li>
+                    <li><a href="#gaussians">The one fact you need</a></li>
+                    <li><a href="#functions">Functions as very long vectors</a></li>
+                    <li><a href="#kernels">The kernel <em>is</em> the model</a></li>
+                    <li><a href="#prior">Sampling the prior in NumPy</a></li>
+                    <li><a href="#posterior">Conditioning on data</a></li>
+                    <li><a href="#noise">Noise, and why you need it</a></li>
+                    <li><a href="#cholesky">Doing it properly: Cholesky</a></li>
+                    <li><a href="#hyper">Learning the hyperparameters</a></li>
+                    <li><a href="#libraries">The same model in a library</a></li>
+                    <li><a href="#bayesopt">Where GPs earn their keep</a></li>
+                    <li><a href="#combustion">A worked example from my field</a></li>
+                    <li><a href="#limits">Limitations and further reading</a></li>
+                </ol>
+            </nav>
+
+            <!-- ================================================== -->
+            <h2 id="why"><span class="num">1</span>Why distributions over functions</h2>
+
+            <p>Suppose you measure something — a flame speed, a drag coefficient, the runtime of a simulation — at seven input settings, and you need a prediction at an eighth. The standard move is to pick a parametric family (a cubic polynomial, a neural network), find the parameters that minimise some loss, and report the resulting curve.</p>
+
+            <p>Two things are unsatisfying about that. First, you had to commit to a family before looking at the data, and the family quietly does most of the work. Second, and more importantly, the answer comes with no honest statement of how much it should be trusted. Interpolating between two nearby measurements and extrapolating far outside the data both produce a number, and the number looks equally confident in both cases.</p>
+
+            <p>A Gaussian process fixes both problems by refusing to pick a single function. Instead it puts a probability distribution over <em>all</em> functions that are plausible a priori — typically "all reasonably smooth ones" — and then uses Bayes' rule to throw away the ones that disagree with the data. What is left is a distribution over functions, whose spread <em>is</em> the uncertainty:</p>
+
+            <div class="callout">
+                <div class="callout-title">The definition</div>
+                <p>A <strong>Gaussian process</strong> is a collection of random variables, any finite subset of which has a joint Gaussian distribution. Write it as</p>
+                <p style="text-align:center">$$f(x) \sim \mathcal{GP}\big(m(x),\, k(x,x')\big)$$</p>
+                <p>where the mean function \(m(x) = \mathbb{E}[f(x)]\) says what we expect before seeing data, and the covariance function (the <strong>kernel</strong>) \(k(x,x') = \mathbb{E}\big[(f(x)-m(x))(f(x')-m(x'))\big]\) says how strongly the function values at two inputs move together.</p>
+            </div>
+
+            <p>That definition is doing something sneaky, and it is worth pausing on. It defines an object over an infinite-dimensional space (functions) purely through statements about finite collections of points. This is what makes GPs computable: you never touch the infinite object, only the finitely many points you actually care about. Everything below follows from that.</p>
+
+            <!-- ================================================== -->
+            <h2 id="gaussians"><span class="num">2</span>The one fact you need about Gaussians</h2>
+
+            <p>Take a two-dimensional Gaussian. Write the two components as \(f_1\) and \(f_2\):</p>
+
+            $$\begin{bmatrix} f_1 \\ f_2 \end{bmatrix} \sim \mathcal{N}\left( \begin{bmatrix} \mu_1 \\ \mu_2 \end{bmatrix}, \begin{bmatrix} \Sigma_{11} & \Sigma_{12} \\ \Sigma_{21} & \Sigma_{22} \end{bmatrix} \right)$$
+
+            <p>Gaussians are closed under the two operations you need for inference, and both have closed forms:</p>
+
+            <p><strong>Marginalisation.</strong> If you do not care about \(f_1\), integrate it out. The result is Gaussian, and you get it by <em>deleting rows and columns</em>:</p>
+
+            $$p(f_2) = \int p(f_1, f_2)\, \mathrm{d}f_1 = \mathcal{N}(\mu_2,\, \Sigma_{22})$$
+
+            <p><strong>Conditioning.</strong> If you <em>observe</em> \(f_1 = a\), the distribution of \(f_2\) is again Gaussian, shifted towards the observation and narrowed:</p>
+
+            $$p(f_2 \mid f_1 = a) = \mathcal{N}\big(\underbrace{\mu_2 + \Sigma_{21}\Sigma_{11}^{-1}(a - \mu_1)}_{\text{mean, pulled towards }a},\; \underbrace{\Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}}_{\text{variance, reduced}}\big)$$
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig1-marginal-conditional.svg" alt="Three panels: a correlated 2D Gaussian, its marginal density, and the conditional density after observing one component."></div>
+                <figcaption><b>Figure 1 —</b> The two operations that make Gaussian processes work. <b>Left:</b> a joint Gaussian over two function values with correlation 0.85. <b>Middle:</b> marginalising \(f_1\) away leaves a standard Gaussian on \(f_2\) — ignoring a variable costs you nothing. <b>Right:</b> conditioning on \(f_1 = 1.5\) moves the mean of \(f_2\) to \(\rho a = 1.28\) and shrinks its standard deviation from 1 to \(\sqrt{1-\rho^2} = 0.53\). That subtraction, \(\Sigma_{22} - \Sigma_{21}\Sigma_{11}^{-1}\Sigma_{12}\), is the entire mechanism by which data reduces uncertainty.</figcaption>
+            </figure>
+
+            <p>Notice that the variance reduction term does not depend on the observed value \(a\) at all. <em>Where</em> you measure determines how much uncertainty you remove; <em>what</em> you measure only moves the mean. This is exactly why a GP can tell you where to take your next measurement before you take it — see <a href="#bayesopt">§11</a>.</p>
+
+            <!-- ================================================== -->
+            <h2 id="functions"><span class="num">3</span>Functions as very long vectors</h2>
+
+            <p>Here is the conceptual jump. A function evaluated on a grid of 300 points is just a vector in \(\mathbb{R}^{300}\). If we can put a 300-dimensional Gaussian over that vector, we have a distribution over functions-restricted-to-that-grid. Refine the grid and nothing breaks: the marginalisation property guarantees that the distribution on a coarse grid is exactly what you get by integrating away the extra points of a fine grid. The two views are consistent, which is why "an infinite-dimensional Gaussian" is a legitimate object.</p>
+
+            <p>What makes the resulting vector look like a <em>function</em> rather than noise is the covariance. If \(f(x)\) and \(f(x')\) are strongly correlated whenever \(x\) and \(x'\) are close, then samples come out continuous and smooth. Correlation is the mathematical content of the word "smooth".</p>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig2-two-points.svg" alt="Random functions with three marked input locations, and the joint distribution of function values at nearby and distant pairs."></div>
+                <figcaption><b>Figure 2 —</b> Why the covariance is everything. <b>Left:</b> five functions drawn from a GP. <b>Middle:</b> the joint distribution of \(f(x_1)\) and \(f(x_2)\) for two inputs 0.4 apart — a thin cigar, correlation 0.92, so knowing one almost determines the other. <b>Right:</b> the same plot for inputs 3.0 apart — essentially a circular blob, correlation 0.01, so knowing one tells you nothing about the other. The kernel just assigns these correlations as a function of distance.</figcaption>
+            </figure>
+
+            <!-- ================================================== -->
+            <h2 id="kernels"><span class="num">4</span>The kernel <em>is</em> the model</h2>
+
+            <p>Choosing a kernel is choosing what you believe about the function before you see data. It is the GP equivalent of choosing an architecture, and it is far more interpretable. The workhorse is the squared exponential, or RBF kernel:</p>
+
+            $$k_{\mathrm{RBF}}(x, x') = \sigma_f^2 \exp\!\left(-\frac{\|x - x'\|^2}{2\ell^2}\right)$$
+
+            <p>It has two hyperparameters with plain-English meanings:</p>
+
+            <ul>
+                <li><strong>The lengthscale \(\ell\)</strong> — how far you have to move in input space before the function value changes appreciably. Small \(\ell\) means wiggly; large \(\ell\) means slowly varying.</li>
+                <li><strong>The signal variance \(\sigma_f^2\)</strong> — the vertical scale. \(\sigma_f\) is roughly the amplitude of the typical deviation from the mean.</li>
+            </ul>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig3-prior-samples.svg" alt="Prior samples from a GP for three lengthscales."></div>
+                <figcaption><b>Figure 3 —</b> Four functions drawn from the prior for three lengthscales. The shaded band is \(\pm 2\sigma_f\) and is identical in all three panels — the lengthscale changes <em>how fast</em> functions wiggle, not <em>how far</em> they stray. Before any data arrives, the GP's uncertainty is the same everywhere, which is what you would expect.</figcaption>
+            </figure>
+
+            <p>The RBF is not the only option, and its assumption of infinite differentiability is often too strong for physical data. A kernel is valid as long as it produces positive semi-definite covariance matrices for any set of inputs. Some standard choices, all of which cost you one line of NumPy:</p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Kernel</th><th>Form</th><th>Use it when</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>RBF / squared exponential</td>
+                        <td>\(\sigma_f^2 \exp(-r^2/2\ell^2)\)</td>
+                        <td>the function is genuinely very smooth</td>
+                    </tr>
+                    <tr>
+                        <td>Matérn 3/2</td>
+                        <td>\(\sigma_f^2 (1 + \sqrt{3}r/\ell)e^{-\sqrt{3}r/\ell}\)</td>
+                        <td>default for physical measurements; once differentiable</td>
+                    </tr>
+                    <tr>
+                        <td>Matérn 1/2 (exponential)</td>
+                        <td>\(\sigma_f^2 e^{-r/\ell}\)</td>
+                        <td>rough, Brownian-looking signals</td>
+                    </tr>
+                    <tr>
+                        <td>Periodic</td>
+                        <td>\(\sigma_f^2\exp\!\big(-2\sin^2(\pi r/p)/\ell^2\big)\)</td>
+                        <td>cycles with known period \(p\)</td>
+                    </tr>
+                    <tr>
+                        <td>Rational quadratic</td>
+                        <td>\(\sigma_f^2(1 + r^2/2\alpha\ell^2)^{-\alpha}\)</td>
+                        <td>several lengthscales at once</td>
+                    </tr>
+                    <tr>
+                        <td>Linear</td>
+                        <td>\(\sigma_f^2(x-c)(x'-c)\)</td>
+                        <td>you want Bayesian linear regression back</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig4-kernel-gallery.svg" alt="Gallery of six kernels: covariance matrices on top, sample functions below."></div>
+                <figcaption><b>Figure 4 —</b> Six kernels, each shown as its covariance matrix \(k(x,x')\) (top, bright means strongly correlated) and three functions drawn from it (bottom). Read the top row as a picture of the assumption: a wide bright diagonal means "neighbours are similar", the repeating stripes of the periodic kernel encode "points one period apart are identical", and the linear kernel's saddle produces nothing but straight lines. The bottom row is the consequence.</figcaption>
+            </figure>
+
+            <div class="callout">
+                <div class="callout-title">Kernels compose</div>
+                <p>Sums and products of valid kernels are valid kernels, and this is where GP modelling gets expressive. <code>periodic × RBF</code> gives a cycle whose shape drifts slowly; <code>linear + periodic</code> gives a trend with seasonality; <code>RBF(ℓ=10) + RBF(ℓ=0.5)</code> gives a slow trend with fast structure on top. You are writing down a model of the phenomenon, not tuning knobs.</p>
+            </div>
+
+            <!-- ================================================== -->
+            <h2 id="prior"><span class="num">5</span>Sampling the prior in NumPy</h2>
+
+            <p>To draw a function from the prior, evaluate the kernel on a grid to get a covariance matrix \(K\), then sample from \(\mathcal{N}(0, K)\). The trick for sampling a correlated Gaussian is the Cholesky factorisation: if \(K = LL^\top\) and \(u \sim \mathcal{N}(0, I)\), then \(Lu\) has covariance \(L\,\mathbb{E}[uu^\top]L^\top = LL^\top = K\). That is the whole sampler.</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>prior.py</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">import numpy as np
+
+def rbf(X1, X2, lengthscale=1.0, variance=1.0):
+    """Squared-exponential covariance between two sets of 1-D inputs."""
+    X1 = np.atleast_2d(X1).reshape(-1, 1)
+    X2 = np.atleast_2d(X2).reshape(-1, 1)
+    sq = (X1 - X2.T) ** 2                      # pairwise squared distances
+    return variance * np.exp(-0.5 * sq / lengthscale ** 2)
+
+def sample_gp(mean, cov, n_samples=1, rng=None, jitter=1e-9):
+    """Draw samples from N(mean, cov) using its Cholesky factor."""
+    rng = np.random.default_rng() if rng is None else rng
+    n = cov.shape[0]
+    L = np.linalg.cholesky(cov + jitter * np.eye(n))   # K = L @ L.T
+    u = rng.standard_normal((n, n_samples))
+    return mean.reshape(-1, 1) + L @ u
+
+X = np.linspace(-5, 5, 300)
+K = rbf(X, X, lengthscale=1.0)
+samples = sample_gp(np.zeros(len(X)), K, n_samples=4)   # (300, 4)
+</code></pre>
+            </div>
+
+            <div class="callout warn">
+                <div class="callout-title">That jitter is not a hack</div>
+                <p>A covariance matrix from a smooth kernel on a fine grid is <em>numerically</em> singular: nearby columns are almost identical, so the smallest eigenvalues fall below double precision and Cholesky fails with "matrix is not positive definite". Adding \(10^{-9}I\) says "every observation carries a whisper of independent noise", which is both true and enough to fix the factorisation. If you need more than about \(10^{-6}\), your lengthscale is probably far too long for your grid.</p>
+            </div>
+
+            <!-- ================================================== -->
+            <h2 id="posterior"><span class="num">6</span>Conditioning on data</h2>
+
+            <p>Now the payoff. We have training inputs \(X\) with observed values \(\mathbf{y}\), and we want the function at test inputs \(X_*\). By the definition of a GP, the training and test values are <em>jointly</em> Gaussian:</p>
+
+            $$\begin{bmatrix} \mathbf{y} \\ \mathbf{f}_* \end{bmatrix} \sim \mathcal{N}\left(\mathbf{0}, \begin{bmatrix} K(X,X) & K(X,X_*) \\ K(X_*,X) & K(X_*,X_*) \end{bmatrix}\right)$$
+
+            <p>We know \(\mathbf{y}\). So apply the conditioning formula from <a href="#gaussians">§2</a> verbatim, with \(K = K(X,X)\), \(K_* = K(X,X_*)\) and \(K_{**} = K(X_*,X_*)\):</p>
+
+            $$\begin{aligned} \boldsymbol{\mu}_* &= K_*^\top K^{-1}\mathbf{y} \\[4pt] \boldsymbol{\Sigma}_* &= K_{**} - K_*^\top K^{-1} K_* \end{aligned}$$
+
+            <p>That is Gaussian process regression. There is no training loop, no gradient descent, no iteration — given the kernel, the posterior is available in closed form. Two things are worth staring at:</p>
+
+            <ul>
+                <li>The mean is \(\boldsymbol{\mu}_* = K_*^\top \boldsymbol{\alpha}\) with \(\boldsymbol{\alpha} = K^{-1}\mathbf{y}\), which written out is \(\mu(x) = \sum_{i=1}^{n} \alpha_i\, k(x, x_i)\). <strong>The posterior mean is always a weighted sum of kernel functions centred on the training points.</strong> The data chooses the weights; the kernel chooses the shape.</li>
+                <li>The variance \(\boldsymbol{\Sigma}_*\) contains no \(\mathbf{y}\). Uncertainty depends only on <em>where</em> you have looked, not on what you found there — the same observation as in Figure 1, now for functions.</li>
+            </ul>
+
+            <div class="code-block">
+                <div class="code-label"><span>posterior.py — the naive version</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">def gp_posterior_naive(X_s, X, y, kernel, **kw):
+    K    = kernel(X,   X,   **kw)
+    K_s  = kernel(X,   X_s, **kw)
+    K_ss = kernel(X_s, X_s, **kw)
+
+    K_inv = np.linalg.inv(K)          # don't ship this - see section 8
+    mu  = K_s.T @ K_inv @ y
+    cov = K_ss - K_s.T @ K_inv @ K_s
+    return mu, cov
+</code></pre>
+            </div>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig5-posterior-growth.svg" alt="GP posterior with 0, 1, 3 and 8 observations."></div>
+                <figcaption><b>Figure 5 —</b> The posterior as data arrives. Coloured lines are samples from the posterior; the blue band is \(\pm 2\sigma\); the dashed white line is the function being learned. Every sample passes exactly through every observation, because with no noise term the conditional variance at a training input is exactly zero. Between and beyond the data the samples fan out, and the fanning is the model telling you where it is guessing.</figcaption>
+            </figure>
+
+            <p>Look at the far right of each panel. As you move away from the data, the posterior mean decays back to the prior mean (zero here) and the variance grows back to the prior variance. A GP does not extrapolate a trend — it admits ignorance. Whether that is a feature or an annoyance depends on your application, and it is the main reason people put a non-zero mean function (a linear or physics-based trend) into their GP.</p>
+
+            <!-- ================================================== -->
+            <h2 id="noise"><span class="num">7</span>Noise, and why you need it</h2>
+
+            <p>Real measurements are corrupted. Model the observation as \(y_i = f(x_i) + \varepsilon_i\) with \(\varepsilon_i \sim \mathcal{N}(0, \sigma_n^2)\) independent of everything else. Because independent Gaussians add in variance, this changes exactly one thing — the training block of the covariance:</p>
+
+            $$\mathrm{cov}(\mathbf{y}) = K(X,X) + \sigma_n^2 I$$
+
+            <p>and the predictive equations become</p>
+
+            $$\boldsymbol{\mu}_* = K_*^\top (K + \sigma_n^2 I)^{-1}\mathbf{y}, \qquad \boldsymbol{\Sigma}_* = K_{**} - K_*^\top (K + \sigma_n^2 I)^{-1} K_*$$
+
+            <p>One term, two consequences. The model is no longer forced to interpolate — it can pass near the data instead of through it — and \(K + \sigma_n^2I\) is far better conditioned than \(K\), so the linear algebra stops being fragile. The noise level is a <em>regulariser you can interpret</em>: it is your claim about measurement error, in the units of your measurements.</p>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig6-noise.svg" alt="The same noisy dataset fitted with three different assumed noise levels."></div>
+                <figcaption><b>Figure 6 —</b> The same fourteen noisy measurements (true \(\sigma_n = 0.25\)) fitted three ways. <b>Left:</b> assume the data is exact and the posterior mean contorts itself through every point, with uncertainty collapsing to zero at the observations and exploding between them — the GP version of overfitting. <b>Middle:</b> the correct noise level gives a sensible fit with sensible error bars. <b>Right:</b> assume four times too much noise and the model dismisses real structure as measurement error. Section 9 shows how to avoid choosing this by hand.</figcaption>
+            </figure>
+
+            <!-- ================================================== -->
+            <h2 id="cholesky"><span class="num">8</span>Doing it properly: Cholesky</h2>
+
+            <p>Never call <code>np.linalg.inv</code> on a covariance matrix. It is roughly twice the work of a Cholesky factorisation and numerically much worse, because it discards the structure — symmetry and positive definiteness — that you paid for. The standard recipe is Algorithm 2.1 of Rasmussen &amp; Williams: factor once, then solve triangular systems.</p>
+
+            <p>Write \(K + \sigma_n^2I = LL^\top\). Then \(\boldsymbol{\alpha} = L^\top \backslash (L \backslash \mathbf{y})\) gives the mean in two triangular solves, and with \(v = L \backslash K_*\) the predictive covariance is \(K_{**} - v^\top v\), which is manifestly symmetric.</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>gp.py — the version to actually use</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">def gp_posterior(X_s, X, y, kernel, noise=1e-8, **kw):
+    """Posterior mean and covariance of a zero-mean GP at test inputs X_s."""
+    n = len(X)
+    K    = kernel(X,   X,   **kw) + noise ** 2 * np.eye(n)
+    K_s  = kernel(X,   X_s, **kw)
+    K_ss = kernel(X_s, X_s, **kw)
+
+    L     = np.linalg.cholesky(K + 1e-10 * np.eye(n))       # O(n^3), done once
+    alpha = np.linalg.solve(L.T, np.linalg.solve(L, y))     # K^-1 y
+    v     = np.linalg.solve(L, K_s)                         # L^-1 K_*
+
+    mu  = K_s.T @ alpha
+    cov = K_ss - v.T @ v
+    return mu.ravel(), cov
+
+def nll(X, y, kernel, noise, **kw):
+    """Negative log marginal likelihood -log p(y | X)."""
+    n = len(X)
+    K = kernel(X, X, **kw) + noise ** 2 * np.eye(n)
+    L = np.linalg.cholesky(K + 1e-10 * np.eye(n))
+    alpha = np.linalg.solve(L.T, np.linalg.solve(L, y))
+    return float(0.5 * y.ravel() @ alpha.ravel()      # data fit
+                 + np.sum(np.log(np.diag(L)))         # complexity penalty
+                 + 0.5 * n * np.log(2 * np.pi))       # constant
+</code></pre>
+            </div>
+
+            <p><code>np.linalg.solve</code> on a triangular matrix works but does not exploit triangularity; <code>scipy.linalg.solve_triangular(L, y, lower=True)</code> is the faster call if you are willing to take the SciPy dependency. The Cholesky also hands you the log-determinant for free — \(\log|K| = 2\sum_i \log L_{ii}\) — which is exactly what the marginal likelihood needs next.</p>
+
+            <!-- ================================================== -->
+            <h2 id="hyper"><span class="num">9</span>Learning the hyperparameters</h2>
+
+            <p>So far \(\ell\), \(\sigma_f\) and \(\sigma_n\) have been set by hand. The Bayesian answer is to integrate them out; the practical answer, and the one every library uses by default, is to maximise the <strong>marginal likelihood</strong> — the probability of the observed data with the function itself integrated away:</p>
+
+            $$\log p(\mathbf{y} \mid X, \boldsymbol{\theta}) = \underbrace{-\tfrac{1}{2}\mathbf{y}^\top K_\theta^{-1}\mathbf{y}}_{\text{fits the data}} \;\underbrace{-\; \tfrac{1}{2}\log|K_\theta|}_{\text{penalises complexity}} \;-\; \tfrac{n}{2}\log 2\pi$$
+
+            <p>This quantity deserves its reputation. The first term rewards explaining the data; the second punishes flexible models, because a kernel that can express many functions spreads its probability mass thin and has a large determinant. No validation set, no held-out split — the trade-off falls out of the probability calculus. This is Occam's razor arriving unbidden.</p>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig7-marginal-likelihood.svg" alt="Contour plot of the negative log marginal likelihood over lengthscale and noise, with three corresponding fits."></div>
+                <figcaption><b>Figure 7 —</b> <b>Left:</b> the negative log marginal likelihood over the lengthscale–noise plane for the data of Figure 6 (bright is better; the star marks the optimum at \(\ell = 0.66\), \(\sigma_n = 0.21\), against a true noise level of 0.25 — this is a grid search with \(\sigma_f\) held at 1, and letting it vary too gives \(\ell = 0.59\), as in Figure 8). <b>Right:</b> the fits at the three marked points. The short lengthscale explains the data perfectly and is still rejected, because such a flexible model had to spread its prior mass over far too many possible datasets. The long lengthscale is rejected for the opposite reason: it cannot reach the data at all.</figcaption>
+            </figure>
+
+            <p>In practice you minimise the negative log marginal likelihood with a quasi-Newton method, on a log scale so the positivity constraints look after themselves, and from several random starts because the surface is not convex (the dark ridge in Figure 7 is a second, worse basin where the model explains everything as noise):</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>fit.py</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">from scipy.optimize import minimize
+
+def fit_hyperparameters(X, y, n_restarts=8, rng=None):
+    rng = np.random.default_rng(0) if rng is None else rng
+
+    def objective(log_theta):                      # optimise in log-space
+        ell, sigma_f, sigma_n = np.exp(log_theta)  # so everything stays positive
+        return nll(X, y, rbf, sigma_n, lengthscale=ell, variance=sigma_f ** 2)
+
+    best = None
+    for _ in range(n_restarts):
+        x0 = rng.normal(size=3)                    # log-space starting point
+        res = minimize(objective, x0, method="L-BFGS-B")
+        if best is None or res.fun &lt; best.fun:
+            best = res
+
+    ell, sigma_f, sigma_n = np.exp(best.x)
+    return ell, sigma_f, sigma_n
+</code></pre>
+            </div>
+
+            <p>Gradients of the marginal likelihood are available analytically — \(\partial_\theta \log p = \tfrac{1}{2}\mathrm{tr}\big((\boldsymbol{\alpha}\boldsymbol{\alpha}^\top - K^{-1})\,\partial_\theta K\big)\) — and supplying them makes the optimisation much faster. Deriving them for every kernel by hand is exactly the drudgery that libraries exist to remove, which brings us to the next section.</p>
+
+            <!-- ================================================== -->
+            <h2 id="libraries"><span class="num">10</span>The same model in a library</h2>
+
+            <p>Everything above is about fifty lines of NumPy. Here is the identical model in scikit-learn:</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>sklearn_version.py</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel, WhiteKernel
+
+kernel = (ConstantKernel(1.0, (1e-2, 1e2))     # sigma_f^2
+          * RBF(1.0, (1e-2, 1e2))              # lengthscale
+          + WhiteKernel(0.1, (1e-6, 1e1)))     # sigma_n^2
+
+gpr = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=8)
+gpr.fit(X.reshape(-1, 1), y)
+
+mu, std = gpr.predict(X_s.reshape(-1, 1), return_std=True)
+print(gpr.kernel_)                       # the fitted hyperparameters
+print(gpr.log_marginal_likelihood_value_)
+</code></pre>
+            </div>
+
+            <p>Eight lines instead of fifty, with analytic gradients and restarts included. The question worth asking is whether it computes the same thing. It does — to machine precision:</p>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig8-library-comparison.svg" alt="Overlay of the NumPy and scikit-learn posteriors, and their absolute differences."></div>
+                <figcaption><b>Figure 8 —</b> scikit-learn's fitted hyperparameters (\(\ell = 0.586\), \(\sigma_f = 0.851\), \(\sigma_n = 0.204\)) fed back into the NumPy code from §8. The posterior means agree to \(2\times10^{-15}\), and the log marginal likelihoods agree to fifteen digits (\(-11.714160407140655\) versus \(-11.714160407140657\)). <b>Right:</b> the pink curve is the one real discrepancy, and it is a definition rather than a bug — see below.</figcaption>
+            </figure>
+
+            <div class="callout warn">
+                <div class="callout-title">A trap worth knowing</div>
+                <p>scikit-learn's <code>predict(..., return_std=True)</code> returns the standard deviation of the <em>observation</em> \(y_*\), which includes the <code>WhiteKernel</code> noise, while the code in §8 returns the standard deviation of the <em>latent function</em> \(f_*\). They differ by \(\sqrt{\sigma_*^2 + \sigma_n^2}\) versus \(\sigma_*\) — here 0.12, which is not nothing. Add \(\sigma_n^2\) to the diagonal and the two agree to \(8\times10^{-16}\) (the green curve). Whenever you compare uncertainty estimates across libraries, check which of the two you are being handed; error bars for "where is the true curve" and "where will my next measurement land" are different objects.</p>
+            </div>
+
+            <h3>When you want more than scikit-learn</h3>
+
+            <p>scikit-learn's GP is exact, CPU-bound and fine up to a few thousand points. Beyond that, or when you want a GP to be one component of a larger probabilistic model, reach for a dedicated library. GPyTorch gives you GPU support, automatic differentiation and the approximations that make GPs scale:</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>gpytorch_version.py</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">import gpytorch, torch
+
+class ExactGP(gpytorch.models.ExactGP):
+    def __init__(self, X, y, likelihood):
+        super().__init__(X, y, likelihood)
+        self.mean_module  = gpytorch.means.ConstantMean()
+        self.covar_module = gpytorch.kernels.ScaleKernel(gpytorch.kernels.RBFKernel())
+
+    def forward(self, x):
+        return gpytorch.distributions.MultivariateNormal(
+            self.mean_module(x), self.covar_module(x))
+
+X_t = torch.tensor(X, dtype=torch.float32)
+y_t = torch.tensor(y, dtype=torch.float32)
+
+likelihood = gpytorch.likelihoods.GaussianLikelihood()   # this is the sigma_n^2 I
+model = ExactGP(X_t, y_t, likelihood)
+
+model.train(); likelihood.train()
+opt = torch.optim.Adam(model.parameters(), lr=0.1)
+mll = gpytorch.mlls.ExactMarginalLogLikelihood(likelihood, model)   # section 9
+
+for _ in range(200):                       # gradient ascent on the marginal likelihood
+    opt.zero_grad()
+    loss = -mll(model(X_t), y_t)
+    loss.backward()
+    opt.step()
+
+model.eval(); likelihood.eval()
+with torch.no_grad(), gpytorch.settings.fast_pred_var():
+    posterior = likelihood(model(torch.tensor(X_s, dtype=torch.float32)))
+    mean, (lower, upper) = posterior.mean, posterior.confidence_region()
+</code></pre>
+            </div>
+
+            <p>The structure is the same as the NumPy code — a mean, a kernel, a likelihood, the marginal likelihood as the objective — which is the point of writing it by hand first. A quick map of the landscape:</p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Library</th><th>Built on</th><th>Pick it when</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><a href="https://scikit-learn.org/stable/modules/gaussian_process.html" target="_blank" rel="noopener">scikit-learn</a></td><td>NumPy/SciPy</td><td>small exact GPs inside an existing sklearn pipeline</td></tr>
+                    <tr><td><a href="https://gpytorch.ai/" target="_blank" rel="noopener">GPyTorch</a></td><td>PyTorch</td><td>large data, GPU, deep kernels, multi-output</td></tr>
+                    <tr><td><a href="https://www.gpflow.org/" target="_blank" rel="noopener">GPflow</a></td><td>TensorFlow</td><td>sparse/variational GPs with a clean model API</td></tr>
+                    <tr><td><a href="https://num.pyro.ai/" target="_blank" rel="noopener">NumPyro</a> / <a href="https://www.pymc.io/" target="_blank" rel="noopener">PyMC</a></td><td>JAX / PyTensor</td><td>the GP is one piece of a bigger Bayesian model, and you want MCMC over the hyperparameters instead of a point estimate</td></tr>
+                    <tr><td><a href="https://botorch.org/" target="_blank" rel="noopener">BoTorch</a></td><td>GPyTorch</td><td>Bayesian optimisation and experimental design</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <!-- ================================================== -->
+            <h2 id="bayesopt"><span class="num">11</span>Where GPs earn their keep</h2>
+
+            <p>If you only ever needed a point prediction, a gradient-boosted tree would usually beat a GP and train faster. GPs win where the <em>uncertainty itself</em> is what you are using. The clearest case is Bayesian optimisation: you have an expensive objective — a CFD run, a lab experiment, a week of training — and a budget of maybe thirty evaluations.</p>
+
+            <p>Fit a GP to what you have measured, then choose the next point by maximising an acquisition function that trades off exploiting a good mean against exploring a large variance. Expected improvement is the classic, and has a closed form because the posterior at each point is Gaussian:</p>
+
+            $$\mathrm{EI}(x) = \mathbb{E}\big[\max(f(x) - f^+, 0)\big] = \big(\mu(x) - f^+\big)\Phi(z) + \sigma(x)\phi(z), \qquad z = \frac{\mu(x) - f^+}{\sigma(x)}$$
+
+            <p>where \(f^+\) is the best value observed so far, and \(\Phi\), \(\phi\) are the standard normal CDF and PDF. Both terms matter: the first is large where the model expects improvement, the second where it is uncertain.</p>
+
+            <div class="code-block">
+                <div class="code-label"><span>bayesopt.py</span><button class="copy-btn" type="button">copy</button></div>
+<pre><code class="language-python">from scipy.stats import norm
+
+def expected_improvement(mu, std, best, xi=0.01):
+    std = np.maximum(std, 1e-9)
+    imp = mu - best - xi                 # xi: a nudge towards exploration
+    z = imp / std
+    return imp * norm.cdf(z) + std * norm.pdf(z)
+
+X, y = X_init, objective(X_init)
+for _ in range(n_iterations):
+    mu, cov = gp_posterior(X_grid, X, y, rbf, noise=1e-3, lengthscale=0.4)
+    std = np.sqrt(np.clip(np.diag(cov), 0, None))
+
+    x_next = X_grid[np.argmax(expected_improvement(mu, std, y.max()))]
+    X = np.append(X, x_next)             # the expensive call
+    y = np.append(y, objective(x_next))
+</code></pre>
+            </div>
+
+            <figure>
+                <div class="fig-scroll wide"><img src="figures/fig9-bayesopt.svg" alt="Four iterations of Bayesian optimisation showing the GP posterior and the expected improvement."></div>
+                <figcaption><b>Figure 9 —</b> Four iterations of Bayesian optimisation on a function with a deceptive local structure. <b>Top:</b> the GP posterior after each evaluation; the dotted green line is where expected improvement (<b>bottom</b>) is maximised, and the star is the true optimum. Watch the acquisition function change character: early on it is a broad hump over unexplored territory, and by the fourth panel it has split into sharp peaks in the remaining gaps — the model has stopped exploring and started refining. The best observed value climbs from \(-0.24\) to \(0.54\) in three evaluations, and in the last panel the proposal sits on the true optimum — that is where the sixth evaluation goes.</figcaption>
+            </figure>
+
+            <p>The same machinery underlies most modern hyperparameter tuners, and it is the reason GPs remain standard in experimental design long after neural networks took over prediction: with twenty data points a GP is still a well-posed model, and a deep ensemble is not.</p>
+
+            <!-- ================================================== -->
+            <h2 id="combustion"><span class="num">12</span>A worked example from my field</h2>
+
+            <p>An example closer to my own work. Laminar burning velocity \(S_L\) as a function of equivalence ratio \(\varphi\) is expensive to measure and expensive to compute from detailed chemistry, so it is routinely surrogate-modelled. It is also a textbook case for a GP: smooth, single-peaked near \(\varphi \approx 1.1\), measured at a handful of conditions, with real experimental scatter.</p>
+
+            <p>The data below is synthetic — the shape of the curve is realistic, the numbers are invented — but the behaviour it illustrates is not:</p>
+
+            <figure>
+                <div class="fig-scroll"><img src="figures/fig10-flame-speed.svg" alt="A GP fitted to synthetic laminar burning velocity data, with uncertainty growing rapidly outside the measured range."></div>
+                <figcaption><b>Figure 10 —</b> A GP fitted to nine noisy "measurements" of laminar burning velocity. Inside the measured range the \(\pm2\sigma\) band is about the width of the error bars, and the mean tracks the truth. Past \(\varphi = 1.30\), where there is no data, the band opens to cover values from 18 cm/s to below zero within one step of extrapolation. A polynomial fit would have handed you a single confident number there.</figcaption>
+            </figure>
+
+            <p>Two practical lessons from this picture. First, the honest extrapolation behaviour is what makes GPs useful as surrogates inside a larger simulation: you can detect when the surrogate is being queried outside its training envelope and fall back to the expensive model, which is precisely the strategy behind on-the-fly surrogate switching. Second, the mean reverting to a constant outside the data is the prior mean showing through — if you know the physics constrains \(S_L \to 0\) at the flammability limits, encode that as a mean function rather than letting the GP drift back to the average of your training set.</p>
+
+            <!-- ================================================== -->
+            <h2 id="limits"><span class="num">13</span>Limitations and further reading</h2>
+
+            <p>Being fair about the costs:</p>
+
+            <ul>
+                <li><strong>Cubic scaling.</strong> The Cholesky factorisation is \(\mathcal{O}(n^3)\) in time and \(\mathcal{O}(n^2)\) in memory. A few thousand points is comfortable; a hundred thousand needs sparse/inducing-point approximations (SVGP), structured kernels (KISS-GP, SKI) or iterative solvers.</li>
+                <li><strong>High dimensions.</strong> Euclidean distance becomes uninformative as dimension grows, and a stationary kernel is all distance. Automatic relevance determination — one lengthscale per input dimension — helps and doubles as feature selection, but GPs are not the first thing to reach for on 500 raw features.</li>
+                <li><strong>Stationarity.</strong> The standard kernels assume the same smoothness everywhere. Functions with a sharp front and a flat region — ignition delay across a crossover temperature, say — are badly served by a single lengthscale. Input warping or non-stationary kernels are the fix.</li>
+                <li><strong>Non-Gaussian likelihoods.</strong> Classification, counts, or bounded outputs break the conjugacy that gave us closed-form equations, and you are back to approximate inference (Laplace, EP, variational).</li>
+            </ul>
+
+            <p>None of that changes the core, which is remarkably small: a kernel that says which functions are plausible, and one conditioning formula that removes the ones which are not.</p>
+
+            <div class="callout">
+                <div class="callout-title">Run it yourself</div>
+                <p>Every figure in this post was generated by a single script with no dependencies beyond NumPy and Matplotlib (plus scikit-learn for Figure 8): <a href="make_figures.py">make_figures.py</a>. The GP code in it is character-for-character what appears above.</p>
+            </div>
+
+            <h3>References</h3>
+            <ol class="references">
+                <li>C. E. Rasmussen and C. K. I. Williams, <em>Gaussian Processes for Machine Learning</em>, MIT Press, 2006 — the standard reference, and <a href="https://gaussianprocess.org/gpml/" target="_blank" rel="noopener">free online</a>. Chapter 2 is all you need for this post.</li>
+                <li>J. Görtler, R. Kehlbeck and O. Deussen, <a href="https://distill.pub/2019/visual-exploration-gaussian-processes/" target="_blank" rel="noopener">A Visual Exploration of Gaussian Processes</a>, Distill, 2019 — interactive and excellent on the multivariate-Gaussian intuition.</li>
+                <li>M. Krasser, <a href="https://krasserm.github.io/2018/03/19/gaussian-processes/" target="_blank" rel="noopener">Gaussian Processes</a>, 2018 — a clean NumPy walkthrough that this post owes a debt to.</li>
+                <li>D. Duvenaud, <a href="https://www.cs.toronto.edu/~duvenaud/cookbook/" target="_blank" rel="noopener">The Kernel Cookbook</a> — what each kernel assumes, and how to compose them.</li>
+                <li>P. I. Frazier, <a href="https://arxiv.org/abs/1807.02811" target="_blank" rel="noopener">A Tutorial on Bayesian Optimization</a>, arXiv:1807.02811, 2018.</li>
+                <li>C. E. Üstün and A. Paykani, <a href="https://doi.org/10.1016/j.ijhydene.2024.07.220" target="_blank" rel="noopener">Probabilistic machine learning framework for chemical source term integration with Gaussian Processes</a>, <em>International Journal of Hydrogen Energy</em>, 2024 — GPs doing exactly this job on stiff chemistry.</li>
+            </ol>
+
+            <div class="post-footer">
+                <p>Questions, corrections or a better kernel? <a href="../../index.html#contact">Get in touch</a>.</p>
+            </div>
+        </div>
+    </article>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11/highlight.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Maths
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "\\[", right: "\\]", display: true },
+                        { left: "\\(", right: "\\)", display: false }
+                    ],
+                    throwOnError: false
+                });
+            }
+
+            // Code highlighting
+            if (window.hljs) {
+                document.querySelectorAll("pre code").forEach(function (block) {
+                    hljs.highlightElement(block);
+                });
+            }
+
+            // Copy buttons
+            document.querySelectorAll(".copy-btn").forEach(function (btn) {
+                btn.addEventListener("click", function () {
+                    var code = btn.closest(".code-block").querySelector("code");
+                    navigator.clipboard.writeText(code.innerText).then(function () {
+                        btn.textContent = "copied";
+                        setTimeout(function () { btn.textContent = "copy"; }, 1500);
+                    });
+                });
+            });
+        });
+
+        // Reading progress
+        window.addEventListener("scroll", function () {
+            var h = document.documentElement;
+            var scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+            document.getElementById("progress").style.width = (scrolled * 100) + "%";
+        });
+    </script>
+</body>
+</html>

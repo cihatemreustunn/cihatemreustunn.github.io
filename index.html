@@ -256,6 +256,72 @@
             text-decoration: none;
         }
 
+        /* Blog Section */
+        .blog-list {
+            margin-top: 2rem;
+        }
+
+        .blog-card {
+            display: block;
+            background-color: #323232;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-decoration: none;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .blog-card:hover {
+            border-color: #4a9eff;
+            background-color: #363636;
+            text-decoration: none;
+        }
+
+        .blog-date {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .blog-title {
+            font-size: 1.25rem;
+            color: #ffffff;
+            margin-bottom: 0.6rem;
+        }
+
+        .blog-card:hover .blog-title {
+            color: #4a9eff;
+        }
+
+        .blog-excerpt {
+            color: #cccccc;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .blog-tag {
+            background-color: #404040;
+            border: 1px solid #555;
+            color: #cccccc;
+            padding: 0.15rem 0.6rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+
+        .blog-readtime {
+            color: #888;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
         /* Contact Section */
         .contact-info {
             background-color: #363636;
@@ -315,11 +381,11 @@
             <div class="nav-content">
                 <div class="logo">Cihat Emre <strong>Ustun</strong></div>
                 <ul class="nav-links">
-                    <li><a href="#" onclick="showSection('about')" class="active">About</a></li>
-                    <li><a href="#" onclick="showSection('blog')">Blog</a></li>
-                    <li><a href="#" onclick="showSection('publications')">Publications</a></li>
-                    <li><a href="#" onclick="showSection('teaching')">Teaching</a></li>
-                    <li><a href="#" onclick="showSection('contact')">Contact</a></li>
+                    <li><a href="#about" data-section="about" onclick="showSection('about', this); return false;" class="active">About</a></li>
+                    <li><a href="#blog" data-section="blog" onclick="showSection('blog', this); return false;">Blog</a></li>
+                    <li><a href="#publications" data-section="publications" onclick="showSection('publications', this); return false;">Publications</a></li>
+                    <li><a href="#teaching" data-section="teaching" onclick="showSection('teaching', this); return false;">Teaching</a></li>
+                    <li><a href="#contact" data-section="contact" onclick="showSection('contact', this); return false;">Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -380,7 +446,21 @@
             <!-- Blog Section -->
             <section id="blog" class="section">
                 <h2>Blog</h2>
-                <p>Coming soon! I'll be sharing insights about my research, academic life, and thoughts on developments in the field.</p>
+                <p>Notes on Bayesian machine learning, uncertainty quantification and combustion modelling — the things I wish someone had explained to me with pictures and code.</p>
+
+                <div class="blog-list">
+                    <a class="blog-card" href="blog/gaussian-processes/index.html">
+                        <div class="blog-date">12 September 2026</div>
+                        <div class="blog-title">Gaussian Processes from Scratch</div>
+                        <div class="blog-excerpt">A visual, code-first introduction to Gaussian processes. Starting from a single fact about Gaussian distributions, we build GP regression in about fifty lines of NumPy — priors, kernels, conditioning, noise, Cholesky, and hyperparameter learning by marginal likelihood — then reproduce it in scikit-learn and GPyTorch and put it to work on Bayesian optimisation and a flame-speed surrogate.</div>
+                        <div class="blog-tags">
+                            <span class="blog-tag">Bayesian ML</span>
+                            <span class="blog-tag">NumPy</span>
+                            <span class="blog-tag">Uncertainty</span>
+                            <span class="blog-readtime">~25 min read</span>
+                        </div>
+                    </a>
+                </div>
             </section>
 
             <!-- Publications Section -->
@@ -536,23 +616,40 @@
     </main>
 
     <script>
-        function showSection(sectionId) {
+        function showSection(sectionId, clickedLink) {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+
             // Hide all sections
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => {
-                section.classList.remove('active');
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.remove('active');
             });
-            
+
             // Show selected section
-            document.getElementById(sectionId).classList.add('active');
-            
+            section.classList.add('active');
+
             // Update navigation
             const navLinks = document.querySelectorAll('.nav-links a');
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            const link = clickedLink || document.querySelector(
+                '.nav-links a[data-section="' + sectionId + '"]');
+            if (link) link.classList.add('active');
+
+            // Keep the URL in sync so sections can be linked to directly
+            if (history.replaceState) {
+                history.replaceState(null, '', '#' + sectionId);
+            }
         }
+
+        // Open the section named in the URL hash (e.g. index.html#blog)
+        function showSectionFromHash() {
+            const id = window.location.hash.replace('#', '');
+            showSection(document.getElementById(id) ? id : 'about');
+        }
+
+        window.addEventListener('DOMContentLoaded', showSectionFromHash);
+        window.addEventListener('hashchange', showSectionFromHash);
     </script>
 </body>
 </html>
